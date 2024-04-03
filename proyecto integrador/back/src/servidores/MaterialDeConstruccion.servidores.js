@@ -1,16 +1,18 @@
 const { query } = require("express");
 const pool = require ("../providers/conexion");
 
+// Función para verificar si existe un material en la base de datos
 async function serviceExisteMaterial(nombre_producto) {
     try {
-        const resultadoExiste = await pool.query("SELECT COUNT(*) AS count FROM PRODUCTO WHERE NOMBRE_PRODUCTO = $1", [nombre_producto]);
+        const resultadoExiste = await pool.query("SELECT COUNT(*) AS count FROM PRODUCTO WHERE NOMBRE_PRODUCTO = ?", [nombre_producto]);
         return resultadoExiste.rows[0].count > 0;
     } catch (error) {
-        console.error(error);
-        return null;
+        console.error("Error al verificar la existencia del material:", error);
+        throw error; // Lanzar el error para que sea manejado en niveles superiores
     }
 }
 
+// Función para registrar un nuevo material en la base de datos
 async function serviceRegistrarMaterial(id_producto, nombre_producto, descripcion, precio, id_proveedor) {
     try {
         const materialExiste = await serviceExisteMaterial(nombre_producto);
@@ -19,25 +21,22 @@ async function serviceRegistrarMaterial(id_producto, nombre_producto, descripcio
             // El material ya existe en la base de datos
             return 1;
         } else {
-            // Material no existe, proceder con el registro
-            await pool.query("INSERT INTO PRODUCTO (ID_PRODUCTO, NOMBRE_PRODUCTO, DESCRIPCION, PRECIO, PROVEEDORES_ID_PROVEEDOR) VALUES ($1, $2, $3, $4, $5)", [id_producto, nombre_producto, descripcion, precio, id_proveedor]);
+            // El material no existe, proceder con el registro
+            await pool.query("INSERT INTO PRODUCTO (ID_PRODUCTO, NOMBRE_PRODUCTO, DESCRIPCION, PRECIO, PROVEEDORES_ID_PROVEEDOR) VALUES (?, ?, ?, ?, ?)", [id_producto, nombre_producto, descripcion, precio, id_proveedor]);
             return 0; // Indicar que el material se registró correctamente
         }
     } catch (error) {
-        console.error(error);
-        return null; // Indicar un error en caso de que falle la inserción o la verificación de existencia del material
+        console.error("Error al registrar el material:", error);
+        throw error; // Lanzar el error para que sea manejado en niveles superiores
     }
 }
 
+// Función para actualizar un material en la base de datos
 async function serviceActualizarMaterial(id_producto, nombre_producto, descripcion, precio, id_proveedor) {
     try {
-        // Verificar si el material existe antes de actualizarlo (opcional)
-        const materialExiste = await serviceExisteMaterial(nombre_producto);
-        
         // Realizar la actualización del material en la base de datos
-        const resultado = await pool.query("UPDATE PRODUCTO SET NOMBRE_PRODUCTO = $2, DESCRIPCION = $3, PRECIO = $4, PROVEEDORES_ID_PROVEEDOR = $5 WHERE ID_PRODUCTO = $1", [id_producto, nombre_producto, descripcion, precio, id_proveedor]);
-        
-        // Verificar si la actualización tuvo éxito
+        const resultado = await pool.query("UPDATE PRODUCTO SET NOMBRE_PRODUCTO = ?, DESCRIPCION = ?, PRECIO = ?, PROVEEDORES_ID_PROVEEDOR = ? WHERE ID_PRODUCTO = ?", [nombre_producto, descripcion, precio, id_proveedor, id_producto]);
+
         if (resultado.affectedRows > 0) {
             // La actualización fue exitosa
             return 0;
@@ -47,16 +46,16 @@ async function serviceActualizarMaterial(id_producto, nombre_producto, descripci
         }
     } catch (error) {
         console.error("Error al actualizar el material:", error);
-        return null; // Indicar un error en caso de que falle la actualización
+        throw error; // Lanzar el error para que sea manejado en niveles superiores
     }
 }
 
+// Función para buscar un material por su nombre en la base de datos
 async function serviceBuscarMaterial(nombre_producto) {
     try {
         // Realizar la búsqueda del material en la base de datos
-        const resultado = await pool.query("SELECT * FROM PRODUCTO WHERE NOMBRE_PRODUCTO = $1", [nombre_producto]);
-        
-        // Verificar si se encontraron resultados
+        const resultado = await pool.query("SELECT * FROM PRODUCTO WHERE NOMBRE_PRODUCTO = ?", [nombre_producto]);
+
         if (resultado.rows.length > 0) {
             // Se encontraron materiales con el nombre proporcionado
             return resultado.rows;
@@ -66,14 +65,13 @@ async function serviceBuscarMaterial(nombre_producto) {
         }
     } catch (error) {
         console.error("Error al buscar el material:", error);
-        return null; // Indicar un error en caso de que falle la búsqueda
+        throw error; // Lanzar el error para que sea manejado en niveles superiores
     }
 }
 
-
 module.exports = {
- serviceExisteMaterial,
- serviceRegistrarMaterial,
- serviceActualizarMaterial,
- serviceBuscarMaterial
+    serviceExisteMaterial,
+    serviceRegistrarMaterial,
+    serviceActualizarMaterial,
+    serviceBuscarMaterial
 };
