@@ -1,6 +1,5 @@
 const { query } = require("express");
 const pool = require ("../providers/conexion");
-const pool = require("../providers/conexion");
 
 // Función para registrar una orden en el carrito de compras
 async function serviceRegistrarOrden(id_factura, id_producto, cantidad, subtotal) {
