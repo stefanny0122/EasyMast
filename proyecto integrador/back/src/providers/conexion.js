@@ -1,10 +1,11 @@
 const mariadb = require('mariadb');
 
 const config = {
-  host: 'BD_EasyMats',
-  user: 'nombre_de_usuario',
-  password: 'contraseña',
-  database: 'BD_EASYMATS'
+  host: '192.168.3.8',
+  user: 'root',
+  password: '12345',
+  database: 'BD_EASYMATS',
+  port:'3306'
 };
 
 // Función para conectar a la base de datos
