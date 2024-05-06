@@ -1,10 +1,10 @@
 const mariadb = require('mariadb');
 
 const config = {
-  host: '127.0.0.1',
-  user: 'root',
-  password: '12345',
-  database: 'bd_easymats', // Reemplaza 'bd_easymats' con el nombre real de tu base de datos
+  host: '192.168.3.8',
+  user: 'admin',
+  password: '123',
+  database: 'BD_EASYMATS', // Reemplaza 'bd_easymats' con el nombre real de tu base de datos
   port: 3306, // Cambiado el puerto a 3306 nuevamente
   connectTimeout: 6000, // Aumenta el tiempo de espera a 6 segundos (6000 milisegundos)
 };
