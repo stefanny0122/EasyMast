@@ -215,6 +215,9 @@ async function serviceEstadoDeUsuario(tipoUsuario, idUsuario) {
     }
 }
 
+const jwt = require("jsonwebtoken");
+const secreto = "ingreso exitoso su usuario si sirve"; // Reemplaza "TuCadenaSecretaAqui" con tu propia cadena secreta
+
 async function serviceAutentificacion(usuario, contraseña) {
     try {
         let tipoUsuario = null;
@@ -225,7 +228,8 @@ async function serviceAutentificacion(usuario, contraseña) {
         let resultado = await pool.query(query, [usuario, contraseña]);
         if (resultado.rows.length > 0) {
             console.log("Proveedor autenticado correctamente.");
-            return { tipoUsuario: 'proveedor', idUsuario: resultado.rows[0].ID_PROVEEDOR };
+            const token = jwt.sign({ tipoUsuario: 'proveedor', idUsuario: resultado.rows[0].ID_PROVEEDOR }, secreto);
+            return { token };
         }
 
         // Buscar en la tabla de empleados
@@ -233,7 +237,8 @@ async function serviceAutentificacion(usuario, contraseña) {
         resultado = await pool.query(query, [usuario, contraseña]);
         if (resultado.rows.length > 0) {
             console.log("Empleado autenticado correctamente.");
-            return { tipoUsuario: 'empleado', idUsuario: resultado.rows[0].ID_EMPLEADO };
+            const token = jwt.sign({ tipoUsuario: 'empleado', idUsuario: resultado.rows[0].ID_EMPLEADO }, secreto);
+            return { token };
         }
 
         // Buscar en la tabla de clientes
@@ -241,7 +246,8 @@ async function serviceAutentificacion(usuario, contraseña) {
         resultado = await pool.query(query, [usuario, contraseña]);
         if (resultado.rows.length > 0) {
             console.log("Cliente autenticado correctamente.");
-            return { tipoUsuario: 'cliente', idUsuario: resultado.rows[0].ID_CLIENTES };
+            const token = jwt.sign({ tipoUsuario: 'cliente', idUsuario: resultado.rows[0].ID_CLIENTES }, secreto);
+            return { token };
         }
 
         // Si no se encontró en ninguna tabla, las credenciales son incorrectas
@@ -252,6 +258,8 @@ async function serviceAutentificacion(usuario, contraseña) {
         return null;
     }
 }
+
+
 
 module.exports = {
     serviceRegistrarUsuario,
