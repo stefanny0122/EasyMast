@@ -1,12 +1,12 @@
 const mariadb = require('mariadb');
 
 const config = {
-  host: '192.168.3.8',
-  user: 'EasyMats',
-  password: '@EasyMats',
-  database: 'BD_EASYMATS',
-  port: 3306,
-  connectTimeout: 6000, // Aumenta el tiempo de espera a 5 segundos (5000 milisegundos)
+  host: '127.0.0.1',
+  user: 'root',
+  password: '12345',
+  database: 'bd_easymats', // Reemplaza 'bd_easymats' con el nombre real de tu base de datos
+  port: 3306, // Cambiado el puerto a 3306 nuevamente
+  connectTimeout: 6000, // Aumenta el tiempo de espera a 6 segundos (6000 milisegundos)
 };
 
 async function connectToDatabase() {
@@ -25,7 +25,7 @@ async function connectToDatabase() {
 async function main() {
   try {
     const connection = await connectToDatabase();
-    console.log('Operaciones con la base de datos...');
+    console.log('SELECT*FROM estado_cuenta;');
     // Aquí puedes realizar operaciones con la conexión, si se estableció correctamente
     // Por ejemplo, puedes ejecutar consultas SQL aquí
     // await connection.query('SELECT * FROM tabla');
@@ -36,6 +36,3 @@ async function main() {
 }
 
 main(); // Llama a la función main para iniciar la conexión
-
-
-
