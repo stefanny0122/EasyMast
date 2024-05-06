@@ -11,6 +11,24 @@ async function serviceExisteMaterial(nombre_producto) {
         throw error; // Lanzar el error para que sea manejado en niveles superiores
     }
 }
+// Función para obtener todos los materiales de la base de datos
+async function serviceObtenerTodosLosMateriales() {
+    try {
+        // Realizar la búsqueda de todos los materiales en la base de datos
+        const resultado = await pool.query("SELECT * FROM PRODUCTO");
+
+        if (resultado.rows.length > 0) {
+            // Se encontraron materiales en la base de datos
+            return resultado.rows;
+        } else {
+            // No se encontraron materiales en la base de datos
+            return [];
+        }
+    } catch (error) {
+        console.error("Error al obtener todos los materiales:", error);
+        throw error; // Lanzar el error para que sea manejado en niveles superiores
+    }
+}
 
 // Función para registrar un nuevo material en la base de datos
 async function serviceRegistrarMaterial(id_producto, nombre_producto, descripcion, precio, id_proveedor) {
@@ -73,5 +91,6 @@ module.exports = {
     serviceExisteMaterial,
     serviceRegistrarMaterial,
     serviceActualizarMaterial,
-    serviceBuscarMaterial
+    serviceBuscarMaterial,
+    serviceObtenerTodosLosMateriales 
 };
