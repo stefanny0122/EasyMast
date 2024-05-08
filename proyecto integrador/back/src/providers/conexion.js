@@ -1,35 +1,36 @@
-const mariadb = require('mariadb');
+const mysql = require('mysql');
 
 const config = {
   host: '192.168.3.8',
-  user: 'admin',
+  user: 'admin12',
   password: '123',
-  database: 'BD_EASYMATS', // Reemplaza 'bd_easymats' con el nombre real de tu base de datos
-  port: 3306, // Cambiado el puerto a 3306 nuevamente
+  database: 'BD_EASYMATS', // Reemplaza 'BD_EASYMATS' con el nombre real de tu base de datos
+  port: 3306,
   connectTimeout: 6000, // Aumenta el tiempo de espera a 6 segundos (6000 milisegundos)
 };
 
 async function connectToDatabase() {
-  let connection;
   try {
     console.log('Conectando a la base de datos...');
-    connection = await mariadb.createConnection(config);
+    const connection = mysql.createConnection(config);
+    connection.connect();
     console.log('Conexión establecida correctamente.');
+    return connection;
   } catch (error) {
     console.error('Error al conectar a la base de datos:', error);
     throw error; // Relanzamos el error para que pueda ser manejado por el código que llama a esta función
   }
-  return connection;
 }
 
 async function main() {
   try {
     const connection = await connectToDatabase();
-    console.log('SELECT*FROM estado_cuenta;');
-    // Aquí puedes realizar operaciones con la conexión, si se estableció correctamente
-    // Por ejemplo, puedes ejecutar consultas SQL aquí
-    // await connection.query('SELECT * FROM tabla');
-    await connection.end(); // No olvides cerrar la conexión cuando hayas terminado
+    console.log('Insertando registro de estado de cuenta como "Activo"...');
+    connection.query('INSERT INTO ESTADO_CUENTA (ID_ESTADO, TIPO_ESTADO) VALUES (1, "Activo")', (error, results, fields) => {
+      if (error) throw error;
+      console.log('Registro insertado correctamente.');
+      connection.end(); // Cerramos la conexión cuando hayamos terminado
+    });
   } catch (error) {
     console.error('Error en la función principal:', error);
   }
